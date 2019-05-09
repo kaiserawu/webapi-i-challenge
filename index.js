@@ -70,6 +70,35 @@ server.delete('/api/users/:id', (req, res) => {
     })
 })
 
+server.put('/api/users/:id', (req, res) => {
+  const userId = req.params.id;
+
+  const updateData = req.body;
+
+  if (!updateData.name || !updateData.bio) {
+    return res.status(400).json({ errorMessage: "Please provide name and bio for the user." });
+  }
+
+  db.findById(userId)
+    .then(user => {
+      if (user) {
+        db.update(userId, updateData)
+          .then(() => {
+            db.findById(userId)
+              .then(user => {
+                return res.status(200).json(user);
+              }).catch(err => {
+                return res.send(err);
+              })
+          }).catch(err => {
+            return res.status(500).json({ error: "The user information could not be modified." });
+          })
+      } else {
+        return res.status(404).json({ message: "The user with the specified ID does not exist." });
+      }
+    })
+})
+
 server.listen(9090, () => {
   console.log('Listening on port 9090');
 })
