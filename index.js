@@ -9,6 +9,10 @@ const server = express();
 
 server.use(express.json());
 
+server.get('/', (req, res) => {
+  return res.send('<h1>Hello World</h1>');
+})
+
 server.get('/api/users', (req, res) => {
   db.find()
     .then(users => {
